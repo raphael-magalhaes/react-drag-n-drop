@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { DragDropContext, Droppable } from 'react-beautiful-dnd'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { HorizontalDnDList } from './HorizontalDnDList/HorizontalDnDList'
-import { Draggable } from './Draggable/Draggable'
 import { Card } from './Card/Card'
 
 const data = [
@@ -84,18 +83,19 @@ const getListStyle = (isDraggingOver) => ({
 
 const renderDraggableRows = (element) =>
     element.map((item, index) => (
-        <Draggable
-            key={item.id}
-            draggableId={item.id}
-            index={index}
-            getDraggingStyle={getDraggingStyle}
-        >
-            {({ style }) => (
-                <Card
-                    style={style}
-                    content={item.content}
-                    onClick={(content) => alert(`Row ${content} clicked.`)}
-                />
+        <Draggable key={item.id} draggableId={item.id} index={index}>
+            {(provided, snapshot) => (
+                <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                >
+                    <Card
+                        style={getDraggingStyle(snapshot.isDragging)}
+                        content={item.content}
+                        onClick={(content) => alert(`Row ${content} clicked.`)}
+                    />
+                </div>
             )}
         </Draggable>
     ))
