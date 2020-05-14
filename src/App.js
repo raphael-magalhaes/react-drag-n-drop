@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { HorizontalDnDList } from './HorizontalDnDList/HorizontalDnDList'
+import { Draggable } from './Draggable/Draggable'
+import { Card } from './Card/Card'
 
 const data = [
     [
@@ -72,27 +74,31 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 }
 const grid = 8
 
-const getItemStyle = (isDragging, draggableStyle) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: 'none',
-    padding: grid * 2,
-    margin: `0 0 ${grid}px 0`,
-    borderRadius: '5%',
-
-    // change background colour if dragging
-    background: isDragging ? '#90EE90' : '#fafafa',
-    height: '100px',
-
-    // styles we need to apply on draggables
-    ...draggableStyle
-})
 const getListStyle = (isDraggingOver) => ({
     background: isDraggingOver ? '#b3ffb3' : 'lightgrey',
     padding: grid,
-    overflow: 'scroll',
-    maxHeight: '700px',
+    overflowY: 'scroll',
+    maxHeight: 720,
     width: 250
 })
+
+const renderDraggableRows = (element) =>
+    element.map((item, index) => (
+        <Draggable
+            key={item.id}
+            draggableId={item.id}
+            index={index}
+            getDraggingStyle={getDraggingStyle}
+        >
+            {({ style }) => (
+                <Card
+                    style={style}
+                    content={item.content}
+                    onClick={(content) => alert(`Row ${content} clicked.`)}
+                />
+            )}
+        </Draggable>
+    ))
 
 const Column = ({ onDragEnd, state, setState }) => {
     return (
@@ -124,7 +130,7 @@ const Column = ({ onDragEnd, state, setState }) => {
                                         Add new question
                                     </button>
 
-                                    <Cards element={element} />
+                                    {renderDraggableRows(element)}
                                 </div>
                             )}
                         </Droppable>
@@ -135,35 +141,9 @@ const Column = ({ onDragEnd, state, setState }) => {
     )
 }
 
-const Cards = ({ element }) => {
-    return element.map((item, index) => (
-        <Draggable key={item.id} draggableId={item.id} index={index}>
-            {(provided, snapshot) => (
-                <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style
-                    )}
-                >
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'space-around'
-                        }}
-                    >
-                        {item.content}
-                        <button type="button" onClick={() => {}}>
-                            delete
-                        </button>
-                    </div>
-                </div>
-            )}
-        </Draggable>
-    ))
-}
+const getDraggingStyle = (isDragging) => ({
+    background: isDragging ? '#90EE90' : '#fafafa'
+})
 
 function App() {
     const [state, setState] = useState(data)
