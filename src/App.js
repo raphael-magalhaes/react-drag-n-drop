@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 import { HorizontalDnDList } from './HorizontalDnDList/HorizontalDnDList'
 import { Card } from './Card/Card'
+import { DropArea } from './DragAndDrop/DropArea/DropArea'
 
 const data = [
     [
@@ -43,7 +44,6 @@ const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list)
     const [removed] = result.splice(startIndex, 1)
     result.splice(endIndex, 0, removed)
-    console.log(result)
     return result
 }
 
@@ -71,12 +71,14 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 
     return result
 }
-const grid = 8
 
 const getListStyle = (isDraggingOver) => ({
-    background: isDraggingOver ? '#b3ffb3' : 'lightgrey',
-    padding: grid,
-    overflowY: 'scroll',
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    background: isDraggingOver ? '#b3ffb3' : 'Gainsboro',
+    borderRadius: '10px',
+    padding: '0.5rem',
     maxHeight: 720,
     width: 250
 })
@@ -106,35 +108,37 @@ const Column = ({ onDragEnd, state, setState }) => {
             state={state.map((element, index) => ({
                 id: 'index-' + index,
                 content: (
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        <Droppable key={index} droppableId={`${index}`}>
-                            {(provided, snapshot) => (
-                                <div
-                                    ref={provided.innerRef}
-                                    style={getListStyle(
-                                        snapshot.isDraggingOver
-                                    )}
-                                    {...provided.droppableProps}
+                    <DropArea
+                        droppableId={`${index}`}
+                        direction="vertical"
+                        onDrop={onDragEnd}
+                    >
+                        {(provided, snapshot) => (
+                            <div
+                                ref={provided.innerRef}
+                                style={getListStyle(snapshot.isDraggingOver)}
+                                {...provided.droppableProps}
+                            >
+                                <h3>{`Category ${index}`}</h3>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        createNewCard(index, state, setState)
+                                    }
                                 >
-                                    <h3>{`Category ${index}`}</h3>
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            createNewCard(
-                                                index,
-                                                state,
-                                                setState
-                                            )
-                                        }
-                                    >
-                                        Add new question
-                                    </button>
-
+                                    Add new question
+                                </button>
+                                <div
+                                    style={{
+                                        flex: 1,
+                                        overflowY: 'auto'
+                                    }}
+                                >
                                     {renderDraggableRows(element)}
                                 </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
+                            </div>
+                        )}
+                    </DropArea>
                 )
             }))}
         />
