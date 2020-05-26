@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { DragDropContext, Draggable } from 'react-beautiful-dnd'
+import { Draggable } from 'react-beautiful-dnd'
 import { HorizontalDnDList } from './HorizontalDnDList/HorizontalDnDList'
 import { Card } from './Card/Card'
 import { DropArea } from './DragAndDrop/DropArea/DropArea'
@@ -28,6 +28,14 @@ const data = [
     ]
 ]
 
+const columnStyle = {
+    container: {
+        flex: 1,
+        minHeight: '640px',
+        overflowY: 'auto'
+    }
+}
+
 const createNewCard = (index, state, setState) => {
     const newState = state
     newState[index] = [
@@ -47,9 +55,6 @@ const reorder = (list, startIndex, endIndex) => {
     return result
 }
 
-/**
- * Moves an item from one list to another list.
- */
 const move = (source, destination, droppableSource, droppableDestination) => {
     // Forbid column change
     if (source !== destination) {
@@ -97,6 +102,7 @@ const renderDraggableRows = (element) =>
                         content={item.content}
                         onClick={(content) => alert(`Row ${content} clicked.`)}
                     />
+                    {provided.placeholder}
                 </div>
             )}
         </Draggable>
@@ -128,14 +134,10 @@ const Column = ({ onDragEnd, state, setState }) => {
                                 >
                                     Add new question
                                 </button>
-                                <div
-                                    style={{
-                                        flex: 1,
-                                        overflowY: 'auto'
-                                    }}
-                                >
+                                <div style={columnStyle.container}>
                                     {renderDraggableRows(element)}
                                 </div>
+                                {provided.placeholder}
                             </div>
                         )}
                     </DropArea>
@@ -189,13 +191,11 @@ function App() {
             </button>
 
             <div style={{ display: 'flex' }}>
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Column
-                        state={state}
-                        onDragEnd={onDragEnd}
-                        setState={setState}
-                    />
-                </DragDropContext>
+                <Column
+                    state={state}
+                    onDragEnd={onDragEnd}
+                    setState={setState}
+                />
             </div>
         </div>
     )

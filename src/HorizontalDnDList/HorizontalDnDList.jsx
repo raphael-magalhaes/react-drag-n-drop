@@ -32,8 +32,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 const getListStyle = (isDraggingOver) => ({
     padding: '1rem',
     background: isDraggingOver ? 'lightblue' : 'white',
-    display: 'flex',
-    overflow: 'auto'
+    display: 'flex'
 })
 
 export class HorizontalDnDList extends Component {
@@ -62,8 +61,6 @@ export class HorizontalDnDList extends Component {
         })
     }
 
-    // Normally you would want to split things out into separate components.
-    // But in this example everything is just done in one place for simplicity
     render() {
         return (
             <DropArea
@@ -96,10 +93,12 @@ export class HorizontalDnDList extends Component {
                                             Drag area
                                         </div>
                                         {item.content}
+                                        {provided.placeholder}
                                     </div>
                                 )}
                             </Draggable>
                         ))}
+                        {provided.placeholder}
                     </div>
                 )}
             </DropArea>

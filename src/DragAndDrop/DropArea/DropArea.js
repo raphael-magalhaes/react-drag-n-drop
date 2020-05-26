@@ -5,12 +5,7 @@ const DropArea = ({ children, droppableId, direction, onDrop }) => {
     return (
         <DragDropContext onDragEnd={onDrop}>
             <Droppable droppableId={droppableId} direction={direction}>
-                {(provided, snapshot) => (
-                    <>
-                        {children(provided, snapshot)}
-                        {provided.placeholder}
-                    </>
-                )}
+                {(provided, snapshot) => children(provided, snapshot)}
             </Droppable>
         </DragDropContext>
     )
